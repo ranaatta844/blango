@@ -47,6 +47,7 @@ class Dev(Configuration):
         'django.contrib.sessions',
         'django.contrib.messages',
         'django.contrib.staticfiles',
+        'blango_auth',
         'blog',
         'crispy_forms',
         'crispy_bootstrap5',
@@ -106,6 +107,7 @@ class Dev(Configuration):
         default=f"sqlite:///{BASE_DIR}/alternative_db.sqlite3",
     ),
 }
+    AUTH_USER_MODEL = 'blango_auth.User'
 
 
     # Password validation
