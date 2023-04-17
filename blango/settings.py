@@ -18,7 +18,12 @@ import dj_database_url
 class Dev(Configuration):
     # Build paths inside the project like this: BASE_DIR / 'subdir'.
     BASE_DIR = Path(__file__).resolve().parent.parent
-
+    
+    # setting up the email for sending out
+    EMAIL_BACKEND= 'django.core.mail.backends.console.EmailBackend'
+   
+    # account activation time setting
+    ACCOUNT_ACTIVATION_DAYS = 7
 
     # Quick-start development settings - unsuitable for production
     # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/

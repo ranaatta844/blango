@@ -32,7 +32,7 @@ class BlangoUserManager(UserManager):
 class User(AbstractUser):
   username= None
   email= models.EmailField(_('email address'), unique= True)
-  objects = BlangoUserManager
+  objects = BlangoUserManager()
   USERNAME_FIELD= "email"
   REQUIRED_FIELDS=[]
   def __str__(self):
