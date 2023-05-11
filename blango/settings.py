@@ -154,14 +154,17 @@ class Dev(Configuration):
       'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
   ]
 
-    #setting the drf token system
+    #setting the rest framework keys
     REST_FRAMEWORK = {
       "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.BasicAuthentication",
         "rest_framework.authentication.SessionAuthentication",
         "rest_framework.authentication.TokenAuthentication",
-        ]
-        }
+      ],
+      "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticatedOrReadOnly"
+      ],
+    }
 
     #setting the Logiing for the APP
     LOGGING = {
