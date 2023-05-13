@@ -1,8 +1,24 @@
 from rest_framework import serializers
-from blog.models import Post, Tag
+from blog.models import Post, Tag, Comment
 from blango_auth.models import User
 
-## a post serializers class
+#userserializer
+class UserSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = User
+    fields =['first_name', 'last_name', 'email']
+
+#comment serializer
+class CommentSerializer(serializers.ModelSerializer):
+  id = serializers.IntegerField(required = False)
+  creator = UserSerializer(read_only = True)
+
+  class Meta:
+    model = Comment
+    fields = ['id', 'creator', 'content', 'modified_at','created_at']
+    read_only = ['modified_at','created_at']
+
+#post serializers
 class PostSerializer(serializers.ModelSerializer):
   tags = serializers.SlugRelatedField(
     slug_field ='value', many =True , queryset= Tag.objects.all()
@@ -15,8 +31,29 @@ class PostSerializer(serializers.ModelSerializer):
     fields ="__all__"
     readonly = ['modified_at', 'created_at']
 
-# user serializerf class
-class UserSerializer(serializers.ModelSerializer):
-  class Meta:
-    model = User
-    fields =['first_name', 'last_name', 'email']
+# tagfield serializer
+class TagField(serializers.SlugRelatedField):
+  def to_internal_value(self,data):
+    try:
+      return self.get_queryset().get_or_create(value = data.lower())
+    except:
+      self.fail(f"Tag value {data} is invalid")
+
+#postdetail serializers
+class PostDetailSerializer(PostSerializer):
+  comments = CommentSerializer(many = True)
+
+  def update(self, instance, validated_data):
+    comments = validated_data.pop("comments")
+    instance = super(PostDetailSerializer,self).update(instance, validated_data)
+
+    for comment_data in comments:
+       if comment_data.get('id'):
+         #if comment has an id it already existed in the database
+         continue
+       comment= Comment(**comment_data)
+       comment.creator = self.context["request"].user
+       comment.content_object = instance
+       comment.save()
+
+    return instance
